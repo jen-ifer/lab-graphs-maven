@@ -27,11 +27,11 @@ public class Graph {
   // +-------+
 
   /*
-   * We implement our graphs using adjacency lists. For each vertex, v, we
-   * store a list of edges from that vertex.
+   * We implement our graphs using adjacency lists. For each vertex, v, we store a list of edges
+   * from that vertex.
    *
-   * For convenience, you can refer to vertices by number or by name. However,
-   * it is more efficient to refer to them by number.
+   * For convenience, you can refer to vertices by number or by name. However, it is more efficient
+   * to refer to them by number.
    */
 
   // +-----------+---------------------------------------------------
@@ -98,14 +98,12 @@ public class Graph {
   int numEdges;
 
   /**
-   * The vertices in the graph. The edges from vertex v are stored in
-   * vertices[v].
+   * The vertices in the graph. The edges from vertex v are stored in vertices[v].
    */
   List<Edge>[] vertices;
 
   /**
-   * The names of the vertices. The name of vertex v is stored in
-   * vertexNames[v].
+   * The names of the vertices. The name of vertex v is stored in vertexNames[v].
    */
   String[] vertexNames;
 
@@ -120,14 +118,12 @@ public class Graph {
   Queue<Integer> unusedVertices;
 
   /**
-   * The numbers of the vertices. The vertex with name n is given by
-   * vertexNumbers.get(n).
+   * The numbers of the vertices. The vertex with name n is given by vertexNumbers.get(n).
    */
   HashMap<String, Integer> vertexNumbers;
 
   /**
-   * The version of the graph. (Essentially, the number of times we've modified
-   * the graph.)
+   * The version of the graph. (Essentially, the number of times we've modified the graph.)
    */
   long version;
 
@@ -145,8 +141,7 @@ public class Graph {
   /**
    * Create a new graph with a specified initial capacity (number of nodes).
    *
-   * @param initialCapacity
-   *   The initial capacity of the graph.
+   * @param initialCapacity The initial capacity of the graph.
    */
   @SuppressWarnings("unchecked")
   public Graph(int initialCapacity) {
@@ -163,11 +158,10 @@ public class Graph {
   } // Graph(int)
 
   /**
-   * Create a new graph, reading the edges from a file. Edges must have the form
-   * FROM TO WEIGHT, with one edge per line.
+   * Create a new graph, reading the edges from a file. Edges must have the form FROM TO WEIGHT,
+   * with one edge per line.
    *
-   * @param fName
-   *   The name of the file containing the graph.
+   * @param fName The name of the file containing the graph.
    */
   public Graph(String fName) throws Exception {
     this();
@@ -181,11 +175,9 @@ public class Graph {
   /**
    * Given a vertex number, get the corresponding vertex name.
    *
-   * @param vertexNumber
-   *   The number of a vertex.
+   * @param vertexNumber The number of a vertex.
    *
-   * @return The corresponding vertex name. If there is no corresponding
-   *   vertex name, returns null.
+   * @return The corresponding vertex name. If there is no corresponding vertex name, returns null.
    */
   public String vertexName(int vertexNumber) {
     if (!validVertex(vertexNumber)) {
@@ -198,12 +190,10 @@ public class Graph {
   /**
    * Given a vertex name, get the corresponding vertex number.
    *
-   * @param vertexName
-   *   The name of the vertext.
+   * @param vertexName The name of the vertext.
    *
-   * @return
-   *   The corresponding vertex number. If there is no corresponding vertex
-   *   number, returns -1.
+   * @return The corresponding vertex number. If there is no corresponding vertex number, returns
+   *         -1.
    */
   public int vertexNumber(String vertexName) {
     Integer result = this.vertexNumbers.get(vertexName);
@@ -218,11 +208,29 @@ public class Graph {
   // | Observers |
   // +-----------+
 
+  public void reachableFrom(PrintWriter pen, String vertex) {
+    reachableFrom(pen, vertexNumber(vertex));
+  }
+
+  void reachableFrom(PrintWriter pen, int vertex) {
+    if (!isMarked(vertex)) { // Probably not be necessary
+      mark(vertex);
+      pen.println(vertex);
+      List<Edge> neighbors = vertices[vertex];
+      for (Edge neighbor : neighbors) {
+        if (!isMarked(neighbor.target())) {
+          reachableFrom(pen, neighbor.target());
+        } // if
+      } // for
+    } // if
+  } // reachableForm
+
+
+
   /**
    * Dump the graph in a not very useful way.
    *
-   * @param pen
-   *   Where to print the graph.
+   * @param pen Where to print the graph.
    */
   public void dump(PrintWriter pen) {
     pen.println("A Graph");
@@ -243,8 +251,7 @@ public class Graph {
   /**
    * Dump the graph in a more useful way.
    *
-   * @param pen
-   *   Where to dump the graph.
+   * @param pen Where to dump the graph.
    */
   public void dumpWithNames(PrintWriter pen) {
     pen.println("Vertices: ");
@@ -260,8 +267,8 @@ public class Graph {
     for (int vertex = 0; vertex < vertices.length; vertex++) {
       if (validVertex(vertex)) {
         for (Edge e : vertices[vertex]) {
-          pen.println("  " + vertexName(e.source()) + " --"
-              + e.weight() + "-> " + vertexName(e.target()));
+          pen.println(
+              "  " + vertexName(e.source()) + " --" + e.weight() + "-> " + vertexName(e.target()));
         } // for()
       } // if
     } // for
@@ -271,8 +278,7 @@ public class Graph {
   /**
    * Save the graph in the form expected by readGraph.
    *
-   * @param fname
-   *   The name of the file to use.
+   * @param fname The name of the file to use.
    */
   public void save(String fname) throws Exception {
     PrintWriter fileWriter = new PrintWriter(new File(fname));
@@ -283,15 +289,13 @@ public class Graph {
   /**
    * Write the graph in the form expected by readGraph.
    *
-   * @param pen
-   *   Where to print the graph.
+   * @param pen Where to print the graph.
    */
   public void write(PrintWriter pen) {
     for (int vertex = 0; vertex < vertices.length; vertex++) {
       if (validVertex(vertex)) {
         for (Edge e : vertices[vertex]) {
-          pen.println(vertexName(e.source()) + " " + vertexName(e.target()) + " "
-              + e.weight());
+          pen.println(vertexName(e.source()) + " " + vertexName(e.target()) + " " + e.weight());
         } // for()
       } // if
     } // for
@@ -318,8 +322,7 @@ public class Graph {
   /**
    * Get an iterable for the edges.
    *
-   * @return
-   *   An iterable whose iterator method returns an iterator for the edges.
+   * @return An iterable whose iterator method returns an iterator for the edges.
    */
   public Iterable<Edge> edges() {
     return () -> {
@@ -361,11 +364,9 @@ public class Graph {
   /**
    * Get all of the edges from a particular vertex.
    *
-   * @param vertex
-   *   The vertex whose edges we seek.
+   * @param vertex The vertex whose edges we seek.
    *
-   * @return
-   *   An iterable whose iterator method returns an iterator for the edges.
+   * @return An iterable whose iterator method returns an iterator for the edges.
    */
   public Iterable<Edge> edgesFrom(int vertex) {
     if (!validVertex(vertex)) {
@@ -409,13 +410,55 @@ public class Graph {
   } // edgesFrom(int)
 
   /**
+   * Get an iterable for the reachable vertices.
+   *
+   * @return An iterable whose iterator method returns an iterator for the reachable vertices.
+   */
+  public Iterable<Vertex> reachable() {
+    // Need a stack or queue??
+    return () -> {
+      return new Iterator<Vertex>() {
+        // The position of the iterator
+        int pos = 0;
+        // The version number of the graph when this iterator was created
+        long version = Graph.this.version;
+        // The current edge iterator
+        Iterator<Vertex> ie = Graph.this.vertices[0].iterator();
+        // The current vertex
+        int vertex = 0;
+
+        /**
+         * Determine if edges remain.
+         */
+        public boolean hasNext() {
+          failFast(this.version);
+          return this.pos < Graph.this.numVertices;
+        } // hasNext()
+
+        /**
+         * Grab the next edge
+         */
+        public Vertex next() {
+          if (!this.hasNext()) {
+            throw new NoSuchElementException();
+          } // if
+          while (!this.ie.hasNext()) {
+            this.ie = Graph.this.vertices[++this.vertex].iterator();
+          } // while
+          ++this.pos;
+          return ie.next();
+        } // next()
+      }; // new Iterator<Vertex>
+    };
+  } // reachable()
+
+
+  /**
    * Get all of the edges from a particular vertex.
    *
-   * @param vertex
-   *   The vertex whose edges we seek.
+   * @param vertex The vertex whose edges we seek.
    *
-   * @return
-   *   An iterable whose iterator method returns an iterator for the edges.
+   * @return An iterable whose iterator method returns an iterator for the edges.
    */
   public Iterable<Edge> edgesFrom(String vertex) {
     return this.edgesFrom(vertexNumber(vertex));
@@ -424,10 +467,8 @@ public class Graph {
   /**
    * Get a path from start to finish.
    *
-   * @param start
-   *   The start of the path.
-   * @param finish
-   *   The end of the path.
+   * @param start The start of the path.
+   * @param finish The end of the path.
    *
    * @return A path from start to finish. If no such path exists, returns null.
    */
@@ -471,10 +512,8 @@ public class Graph {
   /**
    * Get a path from start to finish. If no such path exists, returns null.
    *
-   * @param start
-   *   The start of the path.
-   * @param finish
-   *   The end of the path.
+   * @param start The start of the path.
+   * @param finish The end of the path.
    *
    * @return A path from start to finish. If no such path exists, returns null.
    */
@@ -485,8 +524,7 @@ public class Graph {
   /**
    * Get an iterable for the vertices.
    *
-   * @return an iterable whose iterator method returns an iterator
-   *   for all the vertices.
+   * @return an iterable whose iterator method returns an iterator for all the vertices.
    */
   public Iterable<Integer> vertices() {
     return () -> {
@@ -529,15 +567,11 @@ public class Graph {
   /**
    * Add an edge between two vertices. If the edge already exists, replace it.
    *
-   * @param source
-   *   The source of the edge.
-   * @param target
-   *   The target of the edge.
-   * @param weight
-   *   The weight of the edge.
+   * @param source The source of the edge.
+   * @param target The target of the edge.
+   * @param weight The weight of the edge.
    *
-   * @throws Exception
-   *   If either or both vertices are invalid.
+   * @throws Exception If either or both vertices are invalid.
    */
   public void addEdge(int source, int target, int weight) throws Exception {
     if (!validVertex(source) || !validVertex(target)) {
@@ -562,26 +596,20 @@ public class Graph {
   /**
    * Add an edge between two vertices. If the edge already exists, replace it.
    *
-   * @param source
-   *   The source of the edge.
-   * @param target
-   *   The target of the edge.
-   * @param weight
-   *   The weight of the edge.
+   * @param source The source of the edge.
+   * @param target The target of the edge.
+   * @param weight The weight of the edge.
    *
-   * @throws Exception
-   *   If either or both vertices are invalid.
+   * @throws Exception If either or both vertices are invalid.
    */
-  public void addEdge(String source, String target, int weight)
-      throws Exception {
+  public void addEdge(String source, String target, int weight) throws Exception {
     addEdge(this.vertexNumber(source), this.vertexNumber(target), weight);
   } // addEdge(String, String, int)
 
   /**
    * Add a vertex with a particular name.
    *
-   * @param name
-   *   The name of the vertex.
+   * @param name The name of the vertex.
    *
    * @return v the number of the vertex
    *
@@ -611,14 +639,12 @@ public class Graph {
   } // addVertex()
 
   /**
-   * Read a graph from a file. If there are edges in the current graph,
-   * may overwrite them with a new weight.
+   * Read a graph from a file. If there are edges in the current graph, may overwrite them with a
+   * new weight.
    *
-   * @param fname
-   *   THe name of the file to read from.
+   * @param fname THe name of the file to read from.
    *
-   * @throws Exception
-   *   If any of the lines * have the wrong form.
+   * @throws Exception If any of the lines * have the wrong form.
    */
   public void readGraph(String fname) throws Exception {
     BufferedReader lines = new BufferedReader(new FileReader(fname));
@@ -644,10 +670,8 @@ public class Graph {
   /**
    * Remove an edge. If the edge does not exist, does nothing.
    *
-   * @param source
-   *   The source of the edge.
-   * @param target
-   *   The target of the edge.
+   * @param source The source of the edge.
+   * @param target The target of the edge.
    */
   public void removeEdge(int source, int target) {
     Iterator<Edge> ie = this.vertices[source].iterator();
@@ -665,10 +689,8 @@ public class Graph {
   /**
    * Remove an edge. If the edge does not exist, does nothing.
    *
-   * @param source
-   *   The source of the edge.
-   * @param target
-   *   The target of the edge.
+   * @param source The source of the edge.
+   * @param target The target of the edge.
    */
   public void removeEdge(String source, String target) {
     removeEdge(this.vertexNumber(source), this.vertexNumber(target));
@@ -677,8 +699,7 @@ public class Graph {
   /**
    * Remove a vertex. If the vertex does not exist, does nothing.
    *
-   * @param vertex
-   *   The vertex to remove
+   * @param vertex The vertex to remove
    */
   public void removeVertex(int vertex) {
     // Ignore pointless vertex numbers
@@ -713,8 +734,7 @@ public class Graph {
   /**
    * Remove a vertex. If the vertex does not exist, does nothing.
    *
-   * @param vertex
-   *   The name of the vertex to remove.
+   * @param vertex The name of the vertex to remove.
    */
   public void removeVertex(String vertex) {
     this.removeVertex(this.vertexNumber(vertex));
@@ -734,13 +754,10 @@ public class Graph {
   /**
    * Determine if a vertex is marked with a particular mark.
    *
-   * @param vertex
-   *   The number of the vertex to check.
-   * @param mark
-   *   The mark to check for.
+   * @param vertex The number of the vertex to check.
+   * @param mark The mark to check for.
    *
-   * @return true if the vertex has been marked with the specified mark
-   *    and false otherwise.
+   * @return true if the vertex has been marked with the specified mark and false otherwise.
    */
   boolean isMarked(int vertex, byte mark) {
     return (this.validVertex(vertex) && ((this.marks[vertex] & mark) != 0));
@@ -749,8 +766,7 @@ public class Graph {
   /**
    * Determine if a vertex is marked at all.
    *
-   * @param vertex
-   *   The number of the vertex to check.
+   * @param vertex The number of the vertex to check.
    *
    * @return true if the vertex has been marked and false otherwise.
    */
@@ -761,13 +777,10 @@ public class Graph {
   /**
    * Determine if a vertex is marked with a particular mark.
    *
-   * @param vertex
-   *   The name of the vertex to check.
-   * @param mark
-   *   The mark to check for.
+   * @param vertex The name of the vertex to check.
+   * @param mark The mark to check for.
    *
-   * @return true if the vertex has been marked with the specified mark
-   *    and false otherwise.
+   * @return true if the vertex has been marked with the specified mark and false otherwise.
    */
   boolean isMarked(String vertex, byte mark) {
     return this.isMarked(this.vertexNumber(vertex), mark);
@@ -776,8 +789,7 @@ public class Graph {
   /**
    * Determine if a vertex is marked at all.
    *
-   * @param vertex
-   *   The name of the vertex to check.
+   * @param vertex The name of the vertex to check.
    *
    * @return true if the vertex has been marked and false otherwise.
    */
@@ -788,10 +800,8 @@ public class Graph {
   /**
    * Mark a vertex with one of the possible marks.
    *
-   * @param vertex
-   *   The number of the vertex to mark.
-   * @param mark
-   *   The mark to add.
+   * @param vertex The number of the vertex to mark.
+   * @param mark The mark to add.
    */
   void mark(int vertex, byte mark) {
     if (validVertex(vertex)) {
@@ -802,8 +812,7 @@ public class Graph {
   /**
    * Mark a vertex using the default mark.
    *
-   * @param vertex
-   *   The number of the vertex to mark.
+   * @param vertex The number of the vertex to mark.
    */
   void mark(int vertex) {
     this.mark(vertex, Graph.MARK);
@@ -812,10 +821,8 @@ public class Graph {
   /**
    * Mark a vertex with one of the possible marks.
    *
-   * @param vertex
-   *   The name of the vertex to mark.
-   * @param mark
-   *   The mark to add.
+   * @param vertex The name of the vertex to mark.
+   * @param mark The mark to add.
    */
   void mark(String vertex, byte mark) {
     this.mark(this.vertexNumber(vertex), mark);
@@ -824,8 +831,7 @@ public class Graph {
   /**
    * Mark a vertex using the default mark.
    *
-   * @param vertex
-   *   The name of the vertex to mark.
+   * @param vertex The name of the vertex to mark.
    */
   void mark(String vertex) {
     this.mark(this.vertexNumber(vertex));
@@ -834,10 +840,8 @@ public class Graph {
   /**
    * Unmark a vertex.
    *
-   * @param vertex
-   *   The number of the vertex to unmark.
-   * @param mark
-   *   The mark to remove.
+   * @param vertex The number of the vertex to unmark.
+   * @param mark The mark to remove.
    */
   void unmark(int vertex, byte mark) {
     if (validVertex(vertex)) {
@@ -851,8 +855,7 @@ public class Graph {
   /**
    * Unmark a vertex (removes all marks).
    *
-   * @param vertex
-   *   The number of the vertex to unmark.
+   * @param vertex The number of the vertex to unmark.
    */
   void unmark(int vertex) {
     if (validVertex(vertex)) {
@@ -863,10 +866,8 @@ public class Graph {
   /**
    * Unmark a vertex.
    *
-   * @param vertex
-   *   The name of the vertex to unmark.
-   * @param mark
-   *   The mark to remove.
+   * @param vertex The name of the vertex to unmark.
+   * @param mark The mark to remove.
    */
   void unmark(String vertex, byte mark) {
     this.unmark(this.vertexNumber(vertex), mark);
@@ -875,8 +876,7 @@ public class Graph {
   /**
    * Unmark a vertex.
    *
-   * @param vertex
-   *   The name of the vertex to unmark.
+   * @param vertex The name of the vertex to unmark.
    */
   void unmark(String vertex) {
     this.unmark(this.vertexNumber(vertex));
@@ -887,13 +887,10 @@ public class Graph {
   // +-----------+
 
   /**
-   * Add a vertex name / vertex number pair.  Assumes neither the name
-   * or number have been used.
+   * Add a vertex name / vertex number pair. Assumes neither the name or number have been used.
    *
-   * @param name
-   *   The name of the vertex.
-   * @param v
-   *   The number of the vertex.
+   * @param name The name of the vertex.
+   * @param v The number of the vertex.
    *
    * @return v (mostly for convenience)
    */
@@ -921,12 +918,10 @@ public class Graph {
   } // expand()
 
   /**
-   * Compare an expected version to the current version. Die if they do not
-   * match. (Used to implement the traditional "fail fast" policy for
-   * iterators.)
+   * Compare an expected version to the current version. Die if they do not match. (Used to
+   * implement the traditional "fail fast" policy for iterators.)
    *
-   * @param expectedVersion
-   *   The expected version of the graph.
+   * @param expectedVersion The expected version of the graph.
    */
   private void failFast(long expectedVersion) {
     if (this.version != expectedVersion) {
@@ -937,14 +932,12 @@ public class Graph {
   /**
    * Determine if a vertex is valid.
    *
-   * @param vertex
-   *   The number of the vertex.
+   * @param vertex The number of the vertex.
    *
    * @return true if the vertex if valid and false otherwise.
    */
   private boolean validVertex(int vertex) {
-    return ((vertex >= 0) && (vertex < this.vertices.length)
-        && (this.vertexNames[vertex] != null));
+    return ((vertex >= 0) && (vertex < this.vertices.length) && (this.vertexNames[vertex] != null));
   } // validVertex
 
   /**
@@ -960,11 +953,9 @@ public class Graph {
   } // newVertexNumber()
 
   /**
-   * Get a vertex number for a vertex name, even if the name is not already in
-   * the graph.
+   * Get a vertex number for a vertex name, even if the name is not already in the graph.
    *
-   * @param vertex
-   *   The name of the vertex.
+   * @param vertex The name of the vertex.
    *
    * @return the corresponding vertex number.
    */
